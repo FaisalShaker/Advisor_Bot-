@@ -1,0 +1,212 @@
+version: "2.0"
+
+intents:
+- greet
+- goodbye
+- thanks
+- ask_advice
+- affirm
+- deny
+
+entities:
+- virus
+- malware
+- antivirus
+- firewall
+- software_update
+- password
+
+slots:
+  virus_found:
+    type: bool
+    influence_conversation: true
+    mappings:
+    - entity: virus
+  malware_found:
+    type: bool
+    influence_conversation: true
+    mappings:
+    - entity: malware
+  antivirus_installed:
+    type: bool
+    influence_conversation: true
+    mappings:
+    - entity: antivirus
+  firewall_enabled:
+    type: bool
+    influence_conversation: true
+    mappings:
+    - entity: firewall
+  software_up_to_date:
+    type: bool
+    influence_conversation: true
+    mappings:
+    - entity: software_update
+  password_strength:
+    type: text
+    influence_conversation: true
+    mappings:
+    - entity: password
+
+
+responses:
+  utter_greet:
+  - text: "Hello! How can I help you with your cybersecurity today?"
+  
+  utter_goodbye:
+  - text: "Goodbye!"
+  
+  utter_ask_advice:
+  - text: "What kind of cybersecurity advice do you need?"
+  
+  utter_virus_found:
+  - text: "I found a virus on your computer."
+  
+  utter_no_virus_found:
+  - text: "I didn't find any viruses on your computer. It's all good!"
+  
+  utter_malware_found:
+  - text: "I found malware on your computer."
+  
+  utter_no_malware_found:
+  - text: "I didn't find any malware on your computer. You're safe!"
+  
+  utter_antivirus_installed:
+  - text: "You have an antivirus software installed on your computer."
+  
+  utter_no_antivirus_installed:
+  - text: "You don't have an antivirus software installed. You should install one!"
+  
+  utter_firewall_enabled:
+  - text: "Your firewall is enabled. Good job!"
+  
+  utter_firewall_disabled:
+  - text: "Your firewall is disabled. You should enable it to protect your computer."
+  
+  utter_software_up_to_date:
+  - text: "Your software is up to date. That's great!"
+  
+  utter_software_out_of_date:
+  - text: "Your software is out of date. You should update it as soon as possible."
+  
+  utter_password_strong:
+  - text: "Your password is strong. Well done!"
+  
+  utter_password_weak:
+  - text: "Your password is weak. You should choose a stronger one."
+
+  utter_you_are_welcome:
+  - text: "You're welcome!"
+
+  
+actions:
+- action_scan_viruses
+- action_scan_malware
+- action_check_antivirus
+- action_check_firewall
+- action_check_software_update
+- action_check_password_strength
+
+rules:
+- rule: Respond to greetings
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: Respond to goodbyes
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Respond to thanks
+  steps:
+  - intent: thanks
+  - action: utter_you_are_welcome
+
+- rule: Respond to advice request
+  steps:
+  - intent: ask_advice
+  - action: action_provide_advice
+
+- rule: Respond to antivirus inquiry
+  steps:
+  - intent: affirm
+    entities:
+    - antivirus: "antivirus"
+  - action: utter_antivirus_installed
+
+- rule: Respond to no antivirus
+  steps:
+  - intent: deny
+    entities:
+    - antivirus: "antivirus"
+  - action: utter_no_antivirus_installed
+
+- rule: Recommend antivirus
+  condition:
+  - slot: antivirus_installed
+    value: false
+  steps:
+  - intent: ask_advice
+  - action: utter_recommend_antivirus
+
+- rule: Recommend firewall
+  condition:
+  - slot: firewall_enabled
+    value: false
+  steps:
+  - intent: ask_advice
+  - action: utter_recommend_firewall
+
+- rule: Recommend software update
+  condition:
+  - slot: software_up_to_date
+    value: false
+  steps:
+  - intent: ask_advice
+  - action: utter_recommend_update_software
+
+- rule: Recommend password change
+  condition:
+  - slot: password_strength
+    value: weak
+  steps:
+  - intent: ask_advice
+  - action: utter_recommend_change_password
+
+- rule: Virus scan
+  condition:
+  - intent: ask_advice
+  - entity: virus
+  steps:
+  - action: action_scan_viruses
+  - if:
+      - slot_was_set:
+        - virus_found
+      - condition: slot
+        args:
+          virus_found: true
+    then:
+    - action: utter_virus_found
+    else:
+    - action: utter_no_virus_found
+
+- rule: Malware scan
+  condition:
+  - intent: ask_advice
+  - entity: malware
+  steps:
+  - action: action_scan_malware
+  - if:
+      - slot_was_set:
+        - malware_found
+      - condition: slot
+        args:
+          malware_found: true
+    then:
+    - action: utter_malware_found
+    else:
+    - action: utter_no_malware_found
+
+
+

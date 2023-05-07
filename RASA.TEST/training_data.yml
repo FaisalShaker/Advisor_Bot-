@@ -1,0 +1,52 @@
+version: "2.0"
+
+nlu:
+  - intent: greet
+    examples: |
+      - hi
+      - hello
+      - hey there
+  - intent: goodbye
+    examples: |
+      - goodbye
+      - bye
+      - see you later
+  - intent: thanks
+    examples: |
+      - thank you
+      - thanks a lot
+      - thanks so much
+  - intent: ask_advice
+    examples: |
+      - What can I do to protect my computer?
+      - How can I improve my cybersecurity?
+      - What are some good cybersecurity practices?
+  - intent: affirm
+    examples: |
+      - yes
+      - sure
+      - absolutely
+  - intent: deny
+    examples: |
+      - no
+      - not really
+      - not sure
+
+stories:
+  - story: happy path
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - intent: ask_advice
+      - action: utter_advice
+      - intent: thanks
+      - action: utter_thanks
+      - intent: goodbye
+      - action: utter_goodbye
+
+  - story: say goodbye
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - intent: goodbye
+      - action: utter_goodbye

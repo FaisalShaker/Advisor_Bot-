@@ -1,0 +1,18 @@
+language: en
+
+pipeline:
+- name: SpacyNLP
+  model: en_core_web_md
+- name: SpacyTokenizer
+- name: SpacyFeaturizer
+- name: RegexFeaturizer
+- name: EntitySynonymMapper
+- name: SklearnIntentClassifier
+
+policies:
+- name: MemoizationPolicy
+- name: TEDPolicy
+
+max_number_of_nlu_interpretations: 1
+
+assistant_id: 20230504-121624-indulgent-carriage
